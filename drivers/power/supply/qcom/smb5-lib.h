@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /*
- * Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2018-2021 The Linux Foundation. All rights reserved.
  */
 
 #ifndef __SMB5_CHARGER_H
@@ -79,6 +79,7 @@ enum print_reason {
 #define JEITA_ARB_VOTER			"JEITA_ARB_VOTER"
 #define MOISTURE_VOTER			"MOISTURE_VOTER"
 #define HVDCP2_ICL_VOTER		"HVDCP2_ICL_VOTER"
+#define HVDCP2_12V_ICL_VOTER		"HVDCP2_12V_ICL_VOTER"
 #ifdef CONFIG_MACH_XIAOMI_SM8250
 #define HVDCP2_FCC_VOTER		"HVDCP2_FCC_VOTER"
 #endif
@@ -797,6 +798,7 @@ struct smb_charger {
 	int			fake_batt_status;
 	bool			step_chg_enabled;
 	bool			sw_jeita_enabled;
+	bool			jeita_arb_enable;
 	bool			typec_legacy_use_rp_icl;
 	bool			is_hdc;
 	bool			chg_done;
