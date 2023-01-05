@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #ifndef _CAM_VFE_BUS_VER2_H_
@@ -98,6 +99,7 @@ struct cam_vfe_bus_ver2_reg_offset_ubwc_client {
 	uint32_t meta_stride;
 	uint32_t mode_cfg_0;
 	uint32_t bw_limit;
+	uint32_t ubwc_comp_en_bit;
 };
 
 /*
@@ -115,6 +117,7 @@ struct cam_vfe_bus_ver2_reg_offset_ubwc_3_client {
 	uint32_t mode_cfg_0;
 	uint32_t mode_cfg_1;
 	uint32_t bw_limit;
+	uint32_t ubwc_comp_en_bit;
 };
 
 
@@ -176,6 +179,7 @@ struct cam_vfe_bus_ver2_vfe_out_hw_info {
  * @bus_client_reg:   Bus client register info
  * @comp_reg_grp:     Composite group register info
  * @vfe_out_hw_info:  VFE output capability
+ * @support_consumed_addr: Indicate if bus support consumed address
  */
 struct cam_vfe_bus_ver2_hw_info {
 	struct cam_vfe_bus_ver2_reg_offset_common common_reg;
@@ -187,6 +191,9 @@ struct cam_vfe_bus_ver2_hw_info {
 	uint32_t num_out;
 	struct cam_vfe_bus_ver2_vfe_out_hw_info
 		vfe_out_hw_info[CAM_VFE_BUS_VER2_VFE_OUT_MAX];
+	struct cam_vfe_bus_ver2_reg_data  reg_data;
+	struct cam_vfe_bus_ver2_stats_cfg_info *stats_data;
+	bool support_consumed_addr;
 };
 
 /*

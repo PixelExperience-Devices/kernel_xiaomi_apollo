@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
  */
 
 #ifndef _CAM_VFE_SOC_H_
@@ -69,10 +69,17 @@ int cam_vfe_deinit_soc_resources(struct cam_hw_soc_info *soc_info);
  *
  * @soc_info:                Device soc information
  *
+ * @num_pix_rsrc:            Number of pix resource in input port
+ *
+ * @num_pd_rsrc:             Number of pdaf resource in input port
+ *
+ * @num_rdi_rsrc:            Number of rdi resource in input port
+ *
  * @Return:                  0: Success
  *                           Non-zero: Failure
  */
-int cam_vfe_enable_soc_resources(struct cam_hw_soc_info *soc_info);
+int cam_vfe_enable_soc_resources(struct cam_hw_soc_info *soc_info,
+	int num_pix_rsrc, int num_pd_rsrc, int num_rdi_rsrc);
 
 /*
  * cam_vfe_disable_soc_resources()

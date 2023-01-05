@@ -14,6 +14,7 @@
 #include "cam_cdm_util.h"
 #include "cam_irq_controller.h"
 #include "cam_tasklet_util.h"
+#include "cam_cpas_api.h"
 
 struct cam_vfe_mux_rdi_data {
 	void __iomem                                *mem_base;
@@ -426,6 +427,57 @@ static int cam_vfe_rdi_handle_irq_bottom_half(void *handler_priv,
 		ret = CAM_VFE_IRQ_STATUS_SUCCESS;
 	}
 
+	if (!rdi_priv->rdi_irq_status)
+		goto end;
+
+	irq_rdi_status =
+		(irq_status1 &
+		rdi_priv->rdi_irq_status->rdi_overflow_mask);
+	if (irq_rdi_status) {
+		ktime_get_boottime_ts64(&ts);
+		CAM_INFO(CAM_ISP,
+			"current monotonic time stamp seconds %lld:%lld",
+			ts.tv_sec, ts.tv_nsec/1000);
+
+		cam_vfe_rdi_cpas_reg_dump(rdi_priv);
+
+		CAM_INFO(CAM_ISP, "ife_clk_src:%lld",
+			soc_private->ife_clk_src);
+		CAM_INFO(CAM_ISP,
+			"ERROR time %lld:%lld SOF %lld:%lld",
+			rdi_priv->error_ts.tv_sec,
+			rdi_priv->error_ts.tv_usec,
+			rdi_priv->sof_ts.tv_sec,
+			rdi_priv->sof_ts.tv_usec);
+
+		if (irq_rdi_status &
+			rdi_priv->rdi_irq_status->rdi0_overflow_mask) {
+			evt_info.res_id = CAM_ISP_IFE_OUT_RES_RDI_0;
+			}
+		else if (irq_rdi_status &
+			rdi_priv->rdi_irq_status->rdi1_overflow_mask) {
+			evt_info.res_id = CAM_ISP_IFE_OUT_RES_RDI_1;
+			}
+		else if (irq_rdi_status &
+			rdi_priv->rdi_irq_status->rdi2_overflow_mask) {
+			evt_info.res_id = CAM_ISP_IFE_OUT_RES_RDI_2;
+			}
+		else if (irq_rdi_status &
+			rdi_priv->rdi_irq_status->rdi3_overflow_mask) {
+			evt_info.res_id = CAM_ISP_IFE_OUT_RES_RDI_3;
+			}
+
+		if (rdi_priv->event_cb)
+			rdi_priv->event_cb(rdi_priv->priv,
+			CAM_ISP_HW_EVENT_ERROR,
+			(void *)&evt_info);
+
+		cam_cpas_get_camnoc_fifo_fill_level_info(
+			soc_private->cpas_version,
+			soc_private->cpas_handle);
+		cam_cpas_log_votes();
+	}
+end:
 	cam_vfe_rdi_put_evt_payload(rdi_priv, &payload);
 	CAM_DBG(CAM_ISP, "returing status = %d", ret);
 	return ret;

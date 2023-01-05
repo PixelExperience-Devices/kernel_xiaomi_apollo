@@ -725,10 +725,15 @@ int32_t cam_csiphy_core_cfg(void *phy_dev,
 
 		csiphy_acq_dev.device_handle =
 			cam_create_device_hdl(&bridge_params);
-		bridge_intf = &csiphy_dev->bridge_intf;
-		bridge_intf->device_hdl[csiphy_acq_params.combo_mode]
-			= csiphy_acq_dev.device_handle;
-		bridge_intf->session_hdl[csiphy_acq_params.combo_mode] =
+		if (csiphy_acq_dev.device_handle <= 0) {
+			rc = -EFAULT;
+			CAM_ERR(CAM_CSIPHY, "Can not create device handle");
+			goto release_mutex;
+		}
+
+		csiphy_dev->csiphy_info[index].hdl_data.device_hdl =
+			csiphy_acq_dev.device_handle;
+		csiphy_dev->csiphy_info[index].hdl_data.session_hdl =
 			csiphy_acq_dev.session_handle;
 
 		if (copy_to_user(u64_to_user_ptr(cmd->handle),
